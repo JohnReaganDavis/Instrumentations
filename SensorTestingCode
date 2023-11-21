@@ -1,0 +1,64 @@
+#include <Adafruit_Sensor.h>
+#include "Adafruit_DHT_Particle.h"
+
+#define DHTPIN D2
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+#define LEDPIN D0
+#define MQ2_ANALOG A0
+#define MQ2_DIGITAL D4
+#define MQ135_ANALOG A1
+#define MQ135_DIGITAL D5
+
+void setup() {
+  pinMode(LEDPIN, OUTPUT);
+  pinMode(MQ2_DIGITAL, INPUT);
+  pinMode(MQ135_DIGITAL, INPUT);
+  
+  dht.begin();
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Reading from the DHT11
+  float humidity = dht.getHumidity();
+  float temperature = dht.getTempCelcius();
+
+  if (isnan(humidity) || isnan(temperature)) {
+    Serial.println("Failed to read from DHT sensor!");
+  } else {
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.print("%, Temp: ");
+    Serial.print(temperature);
+    Serial.println(" *C");
+  }
+
+  // Delay for 3 seconds after reading DHT11
+  delay(5000);
+
+  // Reading from the MQ-2
+  int mq2ValueAnalog = analogRead(MQ2_ANALOG);
+  int mq2ValueDigital = digitalRead(MQ2_DIGITAL);
+  Serial.print("MQ-2 Analog Value: ");
+  Serial.print(mq2ValueAnalog);
+  Serial.print(", Digital Value: ");
+  Serial.println(mq2ValueDigital);
+
+  // Reading from the MQ-135
+  int mq135ValueAnalog = analogRead(MQ135_ANALOG);
+  int mq135ValueDigital = digitalRead(MQ135_DIGITAL);
+  Serial.print("MQ-135 Analog Value: ");
+  Serial.print(mq135ValueAnalog);
+  Serial.print(", Digital Value: ");
+  Serial.println(mq135ValueDigital);
+
+  // Simple test for the LED
+  digitalWrite(LEDPIN, HIGH);
+  delay(1000);
+  digitalWrite(LEDPIN, LOW);
+  
+  // Total delay of 3 seconds before the next loop iteration
+  delay(2000);
+}
